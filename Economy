@@ -1,0 +1,164 @@
+#this file contains an economy and a flexible agent type
+#the economy object represents a region
+#two resources: seeds and metal will support two crafted goods: food and ironworks
+#gold will be used as the medium of exchange and unit of accounts
+import random
+
+
+class economy(object):
+	gold = 1000 #currency available for circulation. track how much is unused
+	population = 10 #size of the economic area (IE a village)
+	
+	#resources in the economy
+	seeds = 10
+	metal = 0
+	ironworks = 0
+	food = 0
+	
+	#demand is for one cycle IE 1 month
+	demand_ironworks = population / 3
+	demand_food = population + random.randrange(0,population/2)
+	demand_metal = demand_ironworks * 2
+	demand_seeds = demand_food * 3
+		
+	#equilibrium prices
+	seed_price = 10
+	metal_price = 10
+	ironworks_price = 10
+	food_price = 10
+	
+	#determinants of demand for food: population, 
+	#determinants of supply of food: farmers, seeds, cost of seeds
+	
+class agent(object):
+	#skills for base agent
+	gather_metal = 70
+	gather_seeds = 80
+	craft_food = 80
+	craft_ironworks = 70
+	
+	#resources
+	seeds = 0
+	metal = 0
+	food = 0
+	ironworks = 0
+	
+	#check prices
+	#choose action
+	#craft
+	#gather 
+	
+class person(agent):
+	def __init__(self):
+		self.gather_seeds += random.randrange(-10,10)
+		self.gather_metal += random.randrange(-10,10)
+		self.craft_ironworks += random.randrange(-10,10)
+		self.craft_food += random.randrange(-10,10)
+		#print self.gather_metal
+		#print self.gather_seeds
+		#print self.craft_food
+		#print self.craft_ironworks
+		
+	#gather function: determine profit from gathering (max of seeds or metal)
+	seed_profit = 0
+	
+	#craft function
+	
+	#choose gather or craft
+	
+class village(economy):
+	def __init__(self):
+		print "The economy has: %d gold, %d population, %d seeds, %d metal, %d food, %d ironworks." %(self.gold, self.population,
+		self.seeds, self.metal, self.food, self.ironworks)
+		
+village1 = village()
+
+#empty lists for village populations
+people = []
+smiths = []
+farmers = []
+metal_gatherers = []
+seed_gatherers = []
+
+#creating people objects
+for i in range(0, village1.population):
+	people.append(person()) 
+
+#insertion sort for smithing
+for i in range(1, village1.population):
+	x = people[i].craft_ironworks
+	j = i
+	while j > 0 and people[j-1].craft_ironworks > x:
+		people[j].craft_ironworks = people[j-1].craft_ironworks
+		j = j - 1
+	people[j].craft_ironworks = x
+
+#number of smiths is a function of demand for ironworks
+#number of smiths is = population / 3 round down
+for i in range(0, int(village1.population/5)):
+	smiths.append(people.pop(len(people)-1))
+	print len(people), "people"
+#	print smiths[i].craft_ironworks
+
+#number of farmers is a function of demand for food
+#each farmer produces skill * 2 food
+#number of farmers = demand_food / 2 * farmer skill
+#calculate this based on the lowest ranked farmer to create a surplus
+#insertion sort for farming
+for i in range(1, len(people)):
+	x = people[i].craft_food
+	j = i
+	while j > 0 and people[j-1].craft_food > x:
+		people[j].craft_food = people[j-1].craft_food
+		j = j - 1
+	people[j].craft_food = x
+
+#determine number of farmers and sorts for best skill
+j = len(people)-1
+food_potential = 0
+while j >0:
+	print people[j].craft_food
+	food_potential = float((people[j].craft_food * 10) /float(100)) + food_potential
+	if food_potential > village1.population * 2:
+		print "final food production ", food_potential, " requires ", len(people)-j, " farmers"
+		break
+	print food_potential
+	j = j-1
+	
+#determines the number of farmers as population/3
+for i in range(0, int(village1.population/3)):
+	print len(people), "people"
+	farmers.append(people.pop(len(people)-1))
+
+#insertion sort for seed gathering
+for i in range(1, len(people)):
+	x = people[i].gather_seeds
+	j = i
+	while j > 0 and people[j-1].gather_seeds > x:
+		#seed_potential = float((people[j].gather_seeds * 10) /float(100)) + seed_potential
+		people[j].gather_seeds = people[j-1].gather_seeds
+		j = j - 1
+	people[j].gather_seeds = x
+
+
+seed_potential = 0
+j = len(people)-1
+while j > 0:
+	print people[j].gather_seeds
+	seed_potential = float((people[j].gather_seeds * 15) / float(100)) + seed_potential
+	if seed_potential > food_potential * 1.25:
+		print seed_potential, "seeds gathered", " requires", len(people)-j, " seed gatherers"
+		break
+	print seed_potential
+	j = j - 1
+	
+#sort the remaining population to get best seed gatherers
+#determine the number of seed gatherers
+#seed production = people * 20 * gather_seeds skill
+for i in range(0, int(village1.population/2)):
+	print len(people), "people"
+	seed_gatherers.append(people.pop(len(people)-1))
+	
+
+	
+	
