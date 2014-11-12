@@ -1,0 +1,81 @@
+Agent-economy
+=============
+#Agent based economy file
+#has agents as objects. Agents need to see available resources and prices. 
+#agents need to know the use value of the resources and sale value of the output
+#how will a bidding system work to determine prices? - sorts to EQ point. does this happen in increments or simultaneously?
+
+
+
+
+#global variables 
+metal_cost = 10
+metal_supply = 10
+smith_sell_price =  20
+smith_goods_demand = 2
+
+#agent object definitions
+#goal is to make agents flexible, develop skills, relation efficiency and profit to skill level and type of resources available
+class Agent(object):
+	
+	def __init__(self):
+		pass
+	
+#agent classes
+class Smith(Agent):
+	metal = 0
+	smith_goods = 0
+	gold = 10
+	def __init__(self):
+		print "I am a smith"
+		print "I have %d gold, %d metal, %d smithed goods \n\n" % (self.gold, self.metal, self.smith_goods)
+	
+	def buy_metal(self):
+		global metal_supply
+		if self.gold >= metal_cost:
+			metal_supply -=1
+			self.metal +=1
+			self.gold -= metal_cost
+			print "buying metal"
+			
+	def craft_item(self):
+		if self.metal >= 1:
+			self.smith_goods +=1
+			self.metal -=1
+			print "crafting item"
+		#print "Smith goods: %d" % self.smith_goods
+		
+	def check_profit(self):
+			return sell_price -  cost
+			
+	def check_resource_cost(self, resource):
+		return resource_cost
+		
+	def sell_item(self):
+		global smith_goods_demand
+		if smith_sell_price > metal_cost and self.smith_goods > 0:
+			self.smith_goods -=1 
+			self.gold += smith_sell_price
+			print "selling item"
+			smith_goods_demand-=1
+			
+			
+#agent creation loop	
+print "in the world:\nmetal supply: %d, metal cost: %d\n\n" % (metal_supply, metal_cost)
+
+
+smith1 = Smith()
+
+
+#economy iterations loop
+#price checking, purchasing loop - each iteration should have resource purchases and goods sales
+#smith1.check_profit()
+
+smith1.buy_metal()
+smith1.craft_item()
+smith1.sell_item()
+
+print "\n\nI am a smith"
+print "I have %d gold, %d metal, %d smithed goods \n\n" % (smith1.gold, smith1.metal, smith1.smith_goods)
+print "\n\nin the world: %d is price, %d is remaining smith goods demand, %d is remaining metal" % (smith_sell_price, smith_goods_demand, metal_supply)
+		
